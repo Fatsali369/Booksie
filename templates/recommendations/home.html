@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Booksie{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1>Welcome to Booksie💕</h1>
+    <p class="lead">Discover and explore a world of books with personalised recommendations.</p>
+    <a href="{% url 'recommendations:book_list' %}" class="btn btn-custom mt-3">View Books</a>
+</div>
+{% endblock %}

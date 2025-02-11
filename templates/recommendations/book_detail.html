@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <!-- 📌 Book Details -->
+        <div class="card shadow p-4 text-center">
+            <h1 class="book-title">{{ book.title }}</h1>
+            <h4 class="text-muted">by <em>{{ book.author }}</em></h4>
+
+            <div class="book-cover-container">
+                <img src="{{ book.cover_image }}" alt="{{ book.title }}" class="book-cover-detail img-fluid">
+            </div>
+
+            <p class="mt-3"><strong>Genre:</strong> {{ book.genre }}</p>
+            <p class="book-description">{{ book.description }}</p>
+
+            <div class="mt-4">
+                <a href="{% url 'recommendations:book_recommendations' book.pk %}" class="btn btn-primary">📖 More Like This</a>
+                <a href="{% url 'recommendations:book_list' %}" class="btn btn-secondary">🔙 Back to Books</a>
+            </div>
+        </div>
+
+        <!-- 📢 User Reviews Section -->
+        <div class="card shadow-sm p-4 mt-4">
+            <h3 class="text-center" style="color: #7b4b32; font-weight: bold;">
+                <i class="fa-solid fa-bullhorn" style="color: red;"></i> User Reviews
+            </h3>
+
+            <ul class="list-group">
+                {% for review in book.reviews.all %}
+                    <li class="list-group-item" style="border-radius: 8px; padding: 15px;">
+                        <strong style="color: #6c3c24;">{{ review.user.username }}</strong>
+                        <span class="text-warning">⭐ {{ review.rating }}/5</span>
+                        <p style="margin-top: 5px; font-style: italic;">{{ review.comment }}</p>
+                        <small class="text-muted">Reviewed on {{ review.created_at|date:"F d, Y" }}</small>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item text-center text-muted">No reviews yet. Be the first to review!</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- 📌 Review Submission Form -->
+        {% if user.is_authenticated %}
+        <div class="card shadow p-4 mt-4">
+            <h3 class="text-center">✍️ Leave a Review</h3>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            <form method="POST" action="{% url 'recommendations:add_review' book.pk %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="rating" class="form-label">Rating:</label>
+                    <select name="rating" id="rating" class="form-control">
+                        <option value="5">⭐⭐⭐⭐⭐ 5 Stars</option>
+                        <option value="4">⭐⭐⭐⭐ 4 Stars</option>
+                        <option value="3">⭐⭐⭐ 3 Stars</option>
+                        <option value="2">⭐⭐ 2 Stars</option>
+                        <option value="1">⭐ 1 Star</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="comment" class="form-label">Comment:</label>
+                    <textarea name="comment" id="comment" class="form-control" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Submit Review</button>
+            </form>
+        </div>
+        {% else %}
+            <p class="text-center mt-3"><a href="{% url 'login' %}" class="btn btn-outline-primary">🔑 Log in to leave a review</a></p>
+        {% endif %}
+
+        <!-- 📌 AI Summary Section -->
+        <div class="card shadow p-4 mt-4">
+            <h3 class="text-center">📖 AI-Generated Summary</h3>
+            <p id="summaryText">
+                {% if book.summary %}
+                    {{ book.summary }}
+                {% else %}
+                    <i>No summary available. Click below to generate one.</i>
+                {% endif %}
+            </p>
+            <button id="generateSummaryBtn" class="btn btn-info">✨ Generate Summary</button>
+        </div>
+
+    </div>
+
+    <script>
+        document.getElementById("generateSummaryBtn").addEventListener("click", function() {
+            fetch("{% url 'recommendations:generate_summary' book.pk %}", { method: "POST" })
+            .then(response => response.json())
+            .then(data => {
+                if (data.summary) {
+                    document.getElementById("summaryText").innerText = data.summary;
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+{% endblock %}

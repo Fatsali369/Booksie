@@ -1,0 +1,95 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}My Book App{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+    <!-- Custom Styling -->
+    <style>
+        body {
+            background-color: #f8f1e4;
+            color: #5a3e2b;
+            font-family: Arial, sans-serif;
+        }
+        h1, h2, h3 {
+            color: #8b4513;
+        }
+        .navbar {
+            background-color: #8b4513 !important;
+            padding: 15px;
+        }
+        .navbar-brand, .nav-link {
+            color: #fff !important;
+        }
+        .nav-link:hover {
+            color: #f4c29f !important;
+        }
+        
+        /* ⬇️ Fix spacing issue */
+        .content-wrapper {
+            padding-top: 80px; /* Increased space so navbar doesn't overlap content */
+        }
+
+        .card {
+            background-color: #fdf7e3;
+            border: 2px solid #5a3e2b;
+            padding: 15px;
+        }
+        .list-group-item {
+            background-color: #fefaf5;
+            color: #5a3e2b;
+        }
+        .btn-custom {
+            background-color: #8b4513;
+            color: white;
+            border: none;
+        }
+        .btn-custom:hover {
+            background-color: #6d3b1e;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🟤 Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">  <!-- Fixed Navbar -->
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'recommendations:home' %}">💕Booksie</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'recommendations:home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/books/' %}active{% endif %}" href="{% url 'recommendations:book_list' %}">Books</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Search</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 📌 Page Content -->
+    <div class="container content-wrapper">  <!-- ✅ Added spacing fix here -->
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

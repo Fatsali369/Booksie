@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Book List{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center text-brown">💕Book List</h1>
+
+    <!-- Search Input -->
+    <form method="GET" class="mb-3">
+        <input type="text" name="q" class="form-control" placeholder="🔍 Search books..." value="{{ request.GET.q }}">
+        <button type="submit" class="btn btn-custom mt-2">Search</button>
+    </form>
+
+    <div class="row">
+        {% for book in books %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow p-3">
+                <img src="{{ book.cover_image }}" alt="{{ book.title }}" class="book-cover img-fluid">
+                <div class="card-body text-center">
+                    <h5 class="book-title"><strong>{{ book.title }}</strong></h5>
+                    <p class="book-author text-muted"><em>by {{ book.author }}</em></p>
+                    <a href="{% url 'recommendations:book_detail' book.pk %}" class="btn btn-custom">View</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No books found.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+<style>
+    .book-cover {
+        width: 100%; /* Ensure image takes full width */
+        height: 300px; /* Fixed height for consistency */
+        object-fit: cover; /* Ensures images fit nicely */
+        border-radius: 5px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-custom {
+        background-color: #8b4513;
+        color: white;
+        border-radius: 5px;
+    }
+
+    .btn-custom:hover {
+        background-color: #a0522d;
+    }
+</style>
